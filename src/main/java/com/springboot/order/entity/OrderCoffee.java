@@ -24,10 +24,12 @@ public class OrderCoffee {
     @JoinColumn(name="ORDER_ID", nullable = false)
     private Order order;
 
+
     public void setOrder(Order order){
         this.order=order;
         if(!order.getOrderCoffees().contains(this)){
                 order.getOrderCoffees().add(this);
+                //order.setOrderCoffee(this) -> 이렇게도 가능.
         }
     }
 }

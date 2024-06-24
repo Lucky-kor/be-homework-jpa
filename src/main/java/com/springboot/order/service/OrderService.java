@@ -1,6 +1,4 @@
 package com.springboot.order.service;
-
-
 import com.springboot.coffee.service.CoffeeService;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
@@ -28,37 +26,13 @@ public class OrderService {
         this.memberService = memberService;
         this.orderRepository = orderRepository;
         this.coffeeService = coffeeService;
-
-
     }
-
 
     public Order createOrder(Order order) {
-        // 회원이 존재하는지 확인
-       Member member = memberService.findVerifiedMember(order.getMember().getMemberId());
-        //커피가 존재하는지 확인
-       order.getOrderCoffees()
-                .stream()
-                .forEach(orderCoffee -> {
-                    coffeeService.findVerifiedCoffee(orderCoffee.getCoffee().getCoffeeId());
-                });
-       int quantity=order.getOrderCoffees()
-               .stream()
-               .mapToInt(orderCoffee -> orderCoffee.getQuantity()).sum();
-
-       Stamp stamp;
-       if(member.getStamp()!=null){
-           stamp= member.getStamp();
-       }else{
-           stamp=new Stamp();
-       }
-
-       stamp.setCoffeeStamp(quantity);
-       member.setStamp(stamp);
-       stamp.setModifiedAt(LocalDateTime.now());
-       return orderRepository.save(order);
+        Order findOrder = preOrderValidation(order);
+        saveUpStamp(findOrder);
+        return orderRepository.save(findOrder);
     }
-
     // 메서드 추가
     public Order updateOrder(Order order) {
         Order findOrder = findVerifiedOrder(order.getOrderId());
@@ -97,5 +71,32 @@ public class OrderService {
                 optionalOrder.orElseThrow(() ->
                         new BusinessLogicException(ExceptionCode.ORDER_NOT_FOUND));
         return findOrder;
+    }
+
+    private Order preOrderValidation(Order order){
+        // 회원이 존재하는지 확인
+        memberService.findVerifiedMember(order.getMember().getMemberId());
+        //커피가 존재하는지 확인
+        order.getOrderCoffees()
+                .stream()
+                .forEach(orderCoffee -> {
+                    coffeeService.findVerifiedCoffee(orderCoffee.getCoffee().getCoffeeId());
+                });
+        return order;
+    }
+    private void saveUpStamp(Order order){
+        Member findMember = memberService.findMember(order.getMember().getMemberId());
+        Stamp stamp = findMember.getStamp();
+
+        int quantity = order.getOrderCoffees()
+                .stream()
+                .mapToInt(orderCoffee -> orderCoffee.getQuantity()).sum();
+
+        stamp.setCoffeeStamp(quantity);
+        stamp.setModifiedAt(LocalDateTime.now());
+        findMember.setStamp(stamp);
+
+        //명시적으로 꼭 업데이트 하기.
+        memberService.updateMember(findMember);
     }
 }

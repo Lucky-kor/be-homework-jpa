@@ -12,14 +12,17 @@ import java.util.List;
 @Getter
 @NoArgsConstructor
 @Entity
+@Setter
 public class Stamp {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Long stampId;
 
 
+    @Setter
     @Column
     private int stampCount;
+
 
     public void setCoffeeStamp(int quantity){
         this.stampCount+=quantity;

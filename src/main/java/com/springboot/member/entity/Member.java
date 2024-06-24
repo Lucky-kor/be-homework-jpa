@@ -39,9 +39,9 @@ public class Member {
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "STAMP_ID")
-    private Stamp stamp;
+    private Stamp stamp = new Stamp();
 
 
     @OneToMany(mappedBy = "member")
@@ -57,17 +57,15 @@ public class Member {
         this.phone = phone;
     }
 
+//연결 추가
+    public void setOrder(Order order){
+        orders.add(order);
+        if(order.getMember()!=this){
+            order.setMember(this);
+        }
+    }
 
-//    public void addOrder(Order order) {
-//        if(!this.orders.contains(order)) {
-//            orders.add(order);
-//            int quantity =
-//                   order.getOrderCoffees()
-//                    .stream()
-//                    .forEach(orderCoffee ->
-//                            orderCoffee.getQuantity());
-//        }
-//    }
+
 
     // 추가 된 부분
     public enum MemberStatus {
