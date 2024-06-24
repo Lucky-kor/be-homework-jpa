@@ -52,8 +52,10 @@ public class OrderService {
        }else{
            stamp=new Stamp();
        }
+
        stamp.setCoffeeStamp(quantity);
        member.setStamp(stamp);
+       stamp.setModifiedAt(LocalDateTime.now());
        return orderRepository.save(order);
     }
 

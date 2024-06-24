@@ -2,6 +2,8 @@ package com.springboot.member.entity;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
+
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -26,6 +28,7 @@ public class Stamp {
     @Column(nullable = false, updatable = false)
    private LocalDateTime createdAt= LocalDateTime.now();
 
+    @Setter
     @Column(nullable = false, name="LAST_MODIFIED_AT")
    private LocalDateTime modifiedAt = LocalDateTime.now();
 
