@@ -1,9 +1,14 @@
 package com.springboot.order.service;
 
+
+import com.springboot.coffee.service.CoffeeService;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
+import com.springboot.member.entity.Member;
+import com.springboot.member.entity.Stamp;
 import com.springboot.member.service.MemberService;
 import com.springboot.order.entity.Order;
+
 import com.springboot.order.repository.OrderRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -17,20 +22,39 @@ import java.util.Optional;
 public class OrderService {
     private final MemberService memberService;
     private final OrderRepository orderRepository;
+    private CoffeeService coffeeService;
 
-    public OrderService(MemberService memberService,
-                        OrderRepository orderRepository) {
+    public OrderService(MemberService memberService, OrderRepository orderRepository, CoffeeService coffeeService) {
         this.memberService = memberService;
         this.orderRepository = orderRepository;
+        this.coffeeService = coffeeService;
+
+
     }
+
 
     public Order createOrder(Order order) {
         // 회원이 존재하는지 확인
-        memberService.findVerifiedMember(order.getMember().getMemberId());
+       Member member = memberService.findVerifiedMember(order.getMember().getMemberId());
+        //커피가 존재하는지 확인
+       order.getOrderCoffees()
+                .stream()
+                .forEach(orderCoffee -> {
+                    coffeeService.findVerifiedCoffee(orderCoffee.getCoffee().getCoffeeId());
+                });
+       int quantity=order.getOrderCoffees()
+               .stream()
+               .mapToInt(orderCoffee -> orderCoffee.getQuantity()).sum();
 
-        // TODO 커피가 존재하는지 조회하는 로직이 포함되어야 합니다.
-
-        return orderRepository.save(order);
+       Stamp stamp;
+       if(member.getStamp()!=null){
+           stamp= member.getStamp();
+       }else{
+           stamp=new Stamp();
+       }
+       stamp.setCoffeeStamp(quantity);
+       member.setStamp(stamp);
+       return orderRepository.save(order);
     }
 
     // 메서드 추가
