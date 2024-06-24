@@ -22,7 +22,7 @@ public class OrderCoffee {
     private int quantity;
 
     @ManyToOne
-    @JoinColumn(name = "ORDERS_ID")
+    @JoinColumn(name = "ORDER_ID")
     private Order order;
 
     @ManyToOne
@@ -31,9 +31,8 @@ public class OrderCoffee {
 
     public void setOrder(Order order){
         this.order = order;
-        if(!order.getOrderCoffeeList().contains(order)){
+        if(!order.getOrderCoffeeList().contains(this)){
             order.setOrderCoffee(this);
         }
     }
-
 }
