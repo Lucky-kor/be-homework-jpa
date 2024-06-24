@@ -1,14 +1,18 @@
 package com.springboot.order.entity;
 
 import com.springboot.member.entity.Member;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
+@AllArgsConstructor
 @Getter
 @Setter
 @Entity(name = "ORDERS")
@@ -30,8 +34,17 @@ public class Order {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST) // 원래 CASCADE 있었는데 orderRepository.save()할 때 detached어쩌구 에러 발생해서 지움
+    private List<OrderCoffee> orderCoffeeList = new ArrayList<>();
+
     public void addMember(Member member) {
         this.member = member;
+    }
+    public void setOrderCoffee(OrderCoffee orderCoffee){
+        orderCoffeeList.add(orderCoffee);
+        if(orderCoffee.getOrder() != this){
+            orderCoffee.setOrder(this);
+        }
     }
 
     public enum OrderStatus {

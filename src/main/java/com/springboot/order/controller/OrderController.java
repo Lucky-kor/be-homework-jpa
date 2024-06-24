@@ -4,6 +4,7 @@ import com.springboot.coffee.service.CoffeeService;
 import com.springboot.order.dto.OrderPatchDto;
 import com.springboot.order.dto.OrderPostDto;
 import com.springboot.order.entity.Order;
+import com.springboot.order.entity.OrderCoffee;
 import com.springboot.order.mapper.OrderMapper;
 import com.springboot.order.service.OrderService;
 import com.springboot.utils.UriCreator;
@@ -17,6 +18,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -38,7 +40,8 @@ public class OrderController {
 
     @PostMapping
     public ResponseEntity postOrder(@Valid @RequestBody OrderPostDto orderPostDto) {
-        Order order = orderService.createOrder(mapper.orderPostDtoToOrder(orderPostDto));
+        Order tempOrder = mapper.orderPostDtoToOrder(orderPostDto);
+        Order order = orderService.createOrder(tempOrder);
         URI location = UriCreator.createUri(ORDER_DEFAULT_URL, order.getOrderId());
 
         return ResponseEntity.created(location).build();
@@ -59,7 +62,7 @@ public class OrderController {
 
         // TODO JPA 기능에 맞춰서 회원이 주문한 커피 정보를 ResponseEntity에 포함 시키세요.
 
-        return new ResponseEntity<>(null);
+        return new ResponseEntity<>(order.getOrderCoffeeList(),HttpStatus.OK);
     }
 
     @GetMapping
@@ -69,8 +72,11 @@ public class OrderController {
         List<Order> orders = pageOrders.getContent();
 
         // TODO JPA 기능에 맞춰서 회원이 주문한 커피 정보 목록을 ResponseEntity에 포함 시키세요.
+        List<List<OrderCoffee>> entireOrderCoffeeList = orders.stream()
+                .map(order -> order.getOrderCoffeeList())
+                .collect(Collectors.toList());
 
-        return new ResponseEntity<>(null);
+        return new ResponseEntity<>(entireOrderCoffeeList, HttpStatus.OK);
     }
 
     @DeleteMapping("/{order-id}")
