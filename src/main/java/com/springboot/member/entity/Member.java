@@ -33,7 +33,7 @@ public class Member {
     @Column(length = 20, nullable = false)
     private MemberStatus memberStatus = MemberStatus.MEMBER_ACTIVE;
 
-    @Column(nullable = false)
+    @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
 
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
@@ -52,9 +52,18 @@ public class Member {
         this.phone = phone;
     }
 
-    public void addOrder(Order order) {
+    public void setOrder(Order order) {
         orders.add(order);
+        if (order.getMember() != this) {
+            order.setMember(this);
+        }
     }
+
+    //    회원만 스탬프 정보를 가지고 있으면 된다.
+//    회원이 가진 스탬프의 개수 id, 생성, 수정날짜가 들어있음
+    @OneToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "stamp_id")
+    private Stamp stamp;
 
     // 추가 된 부분
     public enum MemberStatus {
@@ -66,7 +75,7 @@ public class Member {
         private String status;
 
         MemberStatus(String status) {
-           this.status = status;
+            this.status = status;
         }
     }
 }

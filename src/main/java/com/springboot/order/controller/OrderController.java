@@ -6,6 +6,7 @@ import com.springboot.order.dto.OrderPostDto;
 import com.springboot.order.entity.Order;
 import com.springboot.order.mapper.OrderMapper;
 import com.springboot.order.service.OrderService;
+import com.springboot.response.SingleResponseDto;
 import com.springboot.utils.UriCreator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -50,7 +51,7 @@ public class OrderController {
         orderPatchDto.setOrderId(orderId);
         Order order = orderService.updateOrder(mapper.orderPatchDtoToOrder(orderPatchDto));
 
-        return new ResponseEntity<>(null);
+        return new ResponseEntity<>(new SingleResponseDto<>(mapper.orderToOrderResponseDto(order)),HttpStatus.OK);
     }
 
     @GetMapping("/{order-id}")

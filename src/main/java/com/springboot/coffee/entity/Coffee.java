@@ -1,5 +1,6 @@
 package com.springboot.coffee.entity;
 
+import com.springboot.member.entity.Member;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -38,6 +39,7 @@ public class Coffee {
 
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
+
 
     // 커피 상태 추가
     public enum CoffeeStatus {

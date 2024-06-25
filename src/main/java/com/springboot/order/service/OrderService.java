@@ -2,8 +2,10 @@ package com.springboot.order.service;
 
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
+import com.springboot.member.entity.Stamp;
 import com.springboot.member.service.MemberService;
 import com.springboot.order.entity.Order;
+import com.springboot.order.entity.OrderCoffee;
 import com.springboot.order.repository.OrderRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,8 +29,22 @@ public class OrderService {
     public Order createOrder(Order order) {
         // 회원이 존재하는지 확인
         memberService.findVerifiedMember(order.getMember().getMemberId());
+//       필요한 변수 - 현재 주문한 멤버의 수량
+//       주문한 커피의 수량
+//       그것을 더한 수량이 총 스탬프의 개수 -> 다시 DB에 저장
+//       멤버안에 스템프객체가 들어있음.
+        int currentStamp = order.getMember().getStamp().getStampCount();
 
-        // TODO 커피가 존재하는지 조회하는 로직이 포함되어야 합니다.
+//        추가로 찍어야할 스템프의 개수는 받은 주문의 커피의 수량이어야함. 스트림안에는 orderCoffee 의 quantity가 들어가야함.
+        int addStamp = order.getOrderCoffeeList()
+                .stream()
+                .mapToInt(OrderCoffee::getQuantity)
+                .sum();
+
+//        두 개를 더해서 order안에 Member 안에 stamp에 넣어주면 된다.
+        order.getMember().getStamp().setStampCount(currentStamp + addStamp);
+
+        memberService.updateMember(order.getMember());
 
         return orderRepository.save(order);
     }
