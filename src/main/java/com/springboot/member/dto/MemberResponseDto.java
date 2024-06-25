@@ -11,7 +11,7 @@ public class MemberResponseDto {
     private String email;
     private String name;
     private String phone;
-    private Member.MemberStatus memberStatus;   // 추가된 부분
+    private Member.MemberStatus memberStatus;// 추가된 부분
 
     // 추가된 부분
     public String getMemberStatus() {

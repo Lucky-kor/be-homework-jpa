@@ -42,6 +42,17 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
+    @OneToOne(mappedBy = "member",cascade = CascadeType.ALL)
+    private Stamp  stamp;
+
+    public void setStamp(Stamp stamp){
+        this.stamp = stamp;
+        if(stamp.getMember() != this){
+            stamp.setMember(this);
+        }
+    }
+
+
     public Member(String email) {
         this.email = email;
     }

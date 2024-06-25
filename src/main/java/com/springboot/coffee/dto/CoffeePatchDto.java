@@ -5,10 +5,15 @@ import com.springboot.validator.NotSpace;
 import lombok.Getter;
 import org.hibernate.validator.constraints.Range;
 
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.validation.constraints.Pattern;
 
 @Getter
 public class CoffeePatchDto {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long coffeeId;
 
     @NotSpace(message = "커피명(한글)은 공백이 아니어야 합니다.")
