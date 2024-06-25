@@ -1,11 +1,12 @@
 package com.springboot.order.controller;
 
 import com.springboot.coffee.service.CoffeeService;
-import com.springboot.order.dto.OrderPatchDto;
-import com.springboot.order.dto.OrderPostDto;
+import com.springboot.order.dto.*;
 import com.springboot.order.entity.Order;
 import com.springboot.order.mapper.OrderMapper;
 import com.springboot.order.service.OrderService;
+import com.springboot.response.MultiResponseDto;
+import com.springboot.response.SingleResponseDto;
 import com.springboot.utils.UriCreator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -50,7 +52,7 @@ public class OrderController {
         orderPatchDto.setOrderId(orderId);
         Order order = orderService.updateOrder(mapper.orderPatchDtoToOrder(orderPatchDto));
 
-        return new ResponseEntity<>(null);
+        return new ResponseEntity<>(new SingleResponseDto<>(mapper.orderToOrderResponseDto(order)),HttpStatus.OK);
     }
 
     @GetMapping("/{order-id}")
@@ -59,7 +61,7 @@ public class OrderController {
 
         // TODO JPA 기능에 맞춰서 회원이 주문한 커피 정보를 ResponseEntity에 포함 시키세요.
 
-        return new ResponseEntity<>(null);
+        return new ResponseEntity<>(new SingleResponseDto<>(mapper.orderToOrderResponseDto(order)),HttpStatus.OK);
     }
 
     @GetMapping
@@ -68,9 +70,10 @@ public class OrderController {
         Page<Order> pageOrders = orderService.findOrders(page - 1, size);
         List<Order> orders = pageOrders.getContent();
 
+
         // TODO JPA 기능에 맞춰서 회원이 주문한 커피 정보 목록을 ResponseEntity에 포함 시키세요.
 
-        return new ResponseEntity<>(null);
+        return new ResponseEntity<>(new MultiResponseDto<>(mapper.orderToOrderResponseDto(orders),pageOrders),HttpStatus.OK);
     }
 
     @DeleteMapping("/{order-id}")
