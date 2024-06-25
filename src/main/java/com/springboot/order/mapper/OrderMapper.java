@@ -10,6 +10,9 @@ import com.springboot.order.dto.OrderResponseDto;
 import com.springboot.order.entity.Order;
 import com.springboot.order.entity.OrderCoffee;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+
+
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,14 +40,18 @@ public interface OrderMapper {
         return order;
     }
 
-    default Order orderPatchDtoToOrder(OrderPatchDto orderPatchDto){
-        Order order = new Order();
+    Order orderPatchDtoToOrder(OrderPatchDto orderPatchDto);
+   /*     Order order = new Order();
         order.setOrderId(orderPatchDto.getOrderId());
         order.setOrderStatus(orderPatchDto.getOrderStatus());
-        return order;
-    }
+        return order;*/
 
-    default OrderResponseDto orderToOrderResponseDto(Order order) {
+
+
+    @Mapping(source= "member.memberId", target = "memberId")
+    @Mapping(source = "member.stamp", target = "stamp")
+   OrderResponseDto orderToOrderResponseDto(Order order);
+    /* {
         return new OrderResponseDto(
                 order.getOrderId(),
                 order.getMember().getMemberId(),
@@ -52,15 +59,11 @@ public interface OrderMapper {
                 orderToOrderCoffeeResponseDtos(order),
                 order.getCreatedAt(),
                 order.getMember().getStamp());
-    }
+    }*/
 
-    default List<OrderResponseDto> ordersToOrderResponseDtos(List<Order> orders) {
-           return  orders.stream()
-                    .map(order -> orderToOrderResponseDto(order))
-                    .collect(Collectors.toList());
-    }
+   List<OrderResponseDto> ordersToOrderResponseDtos(List<Order> orders);
 
-    default List<OrderCoffeeResponseDto> orderToOrderCoffeeResponseDtos(Order order) {
+/*    default List<OrderCoffeeResponseDto> orderToOrderCoffeeResponseDtos(Order order) {
 
         List<OrderCoffeeResponseDto> result = order.getOrderCoffees()
                 .stream()
@@ -74,13 +77,14 @@ public interface OrderMapper {
                     orderCoffee.getQuantity());
         }).collect(Collectors.toList());
         return result;
-    }
-//
-//    default MultiResponseDto orderToPageResponseDto(Page<Order>orderPage){
-//        PageInfo pageInfo = new PageInfo(orderPage.getNumber(),orderPage.getSize(),orderPage.getTotalElements(),orderPage.getTotalPages());
-//
-//        return new MultiResponseDto(orderPage.getContent(),(Page)pageInfo);
-//    }
+    }*/
+
+
+    @Mapping(source = "coffee.coffeeId", target ="coffeeId")
+    @Mapping(source = "coffee.korName", target ="korName")
+    @Mapping(source="coffee.engName",target="engName")
+    @Mapping(source="coffee.price",target="price")
+    OrderCoffeeResponseDto orderCoffeeToOrderCoffeeResponseDto(OrderCoffee orderCoffee);
 
 
 }
