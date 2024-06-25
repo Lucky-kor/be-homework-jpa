@@ -13,6 +13,7 @@ public class MemberResponseDto {
     private String phone;
     private Member.MemberStatus memberStatus;   // 추가된 부분
 
+
     // 추가된 부분
     public String getMemberStatus() {
         return memberStatus.getStatus();

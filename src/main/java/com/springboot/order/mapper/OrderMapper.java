@@ -57,6 +57,13 @@ public interface OrderMapper {
         return orderResponseDto;
     };
 
+    default List<OrderResponseDto> orderToOrderResponseDto(List<Order> orders) {
+        List<OrderResponseDto> result = new ArrayList<>();
+        for(Order order : orders){
+            result.add(orderToOrderResponseDto(order));
+        }
+      return result;
+    };
 
     default List<OrderCoffeeResponseDto> orderCoffeesToOrderCoffeeResponseDtos(List<OrderCoffee> orderCoffees) {
         List<OrderCoffeeResponseDto> orderCoffeeResponseDtos = new ArrayList<>();
@@ -73,5 +80,4 @@ public interface OrderMapper {
         }
         return orderCoffeeResponseDtos;
     }
-
 }

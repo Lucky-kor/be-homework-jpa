@@ -63,7 +63,7 @@ public class Member {
 //    회원이 가진 스탬프의 개수 id, 생성, 수정날짜가 들어있음
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "stamp_id")
-    private Stamp stamp;
+    private Stamp stamp = new Stamp();
 
     // 추가 된 부분
     public enum MemberStatus {
