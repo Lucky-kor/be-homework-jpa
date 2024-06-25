@@ -10,6 +10,7 @@ import com.springboot.order.entity.Order;
 import com.springboot.order.entity.OrderCoffee;
 import org.aspectj.weaver.ast.Or;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -37,6 +38,7 @@ public interface OrderMapper {
     }
     Order orderPatchDtoToOrder(OrderPatchDto orderPatchDto);
 
+
     default OrderResponseDto orderToOrderResponseDto(Order order) {
         OrderResponseDto orderResponseDto = new OrderResponseDto();
         orderResponseDto.setOrderId(order.getOrderId());
@@ -49,6 +51,15 @@ public interface OrderMapper {
         orderResponseDto.setCreatedAt(order.getCreatedAt());
         return orderResponseDto;
     }
+//    @Mapping(source = "member.memberId", target = "memberId");
+//    OrderResponseDto orderToOrderResponseDto(Order order);
+
+
+//     @Mapping(source = "coffee.coffeeId", target = "coffeeId")
+//     @Mapping(source = "coffee.korName", target = "korName")
+//     @Mapping(source = "coffee.engName", target = "engName")
+//     @Mapping(source = "coffee.price", target = "price")
+//    OrderCoffeeResponseDto orderCoffeeToORderCoffeeResponseDto(OrderCoffee orderCoffee);
 
 
     default OrderCoffeeResponseDto orderCoffeeToOrderCoffeeResponseDto(OrderCoffee orderCoffee){

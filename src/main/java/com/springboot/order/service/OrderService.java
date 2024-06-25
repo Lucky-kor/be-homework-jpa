@@ -40,7 +40,9 @@ public class OrderService {
             coffeeService.findVerifiedCoffee(orderCoffee.getCoffee().getCoffeeId());
             totalStamp += orderCoffee.getQuantity();
         }
-        stamp.setStampCount(totalStamp);
+        findMember.getStamp().setStampCount(totalStamp);
+        findMember.getStamp().setModifiedAt(LocalDateTime.now());
+        memberService.updateMember(findMember);
 
         return orderRepository.save(order);
     }

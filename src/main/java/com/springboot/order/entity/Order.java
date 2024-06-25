@@ -41,6 +41,13 @@ public class Order {
         }
         this.member = member;
     }
+    public void setOrderCoffeeList(OrderCoffee orderCoffee){
+        orderCoffeeList.add(orderCoffee);
+        if(orderCoffee.getOrder() != this){
+            orderCoffee.setOrder(this);
+        }
+    }
+
 
 //    public void addOrderCoffee(OrderCoffee orderCoffee){
 //        orderCoffeeList.add(orderCoffee);

@@ -28,9 +28,8 @@ public class MemberService {
 
     public Member createMember(Member member) {
         // 이미 등록된 이메일인지 확인
+        member.setStamp(new Stamp());
         verifyExistsEmail(member.getEmail());
-        Stamp stamp = new Stamp();
-        member.setStamp(stamp);
         return memberRepository.save(member);
     }
 

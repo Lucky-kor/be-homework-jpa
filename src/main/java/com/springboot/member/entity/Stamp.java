@@ -26,5 +26,14 @@ public class Stamp {
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
 
+    @OneToOne
+    @JoinColumn(name = "MEMBER_ID")
+    private Member member;
 
+    public void setMember(Member member){
+        this.member = member;
+        if(member.getStamp() != this){
+            member.setStamp(this);
+        }
+    }
 }
