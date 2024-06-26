@@ -42,6 +42,17 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
+    // 멤버를 저장할 때 스탬프도 넣게
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Stamp stamp = new Stamp();
+
+    public void setStamp(Stamp stamp){
+        this.stamp = stamp;
+
+        if(stamp.getMember() != this)
+            stamp.setMember(this);
+    }
+
     public Member(String email) {
         this.email = email;
     }
@@ -52,9 +63,17 @@ public class Member {
         this.phone = phone;
     }
 
-    public void addOrder(Order order) {
+    public void addOrder(Order order){
+        //order의 member에 나 자신을 넣기
+        //항상 이게 먼저 실행되어야함!!!!
+        //둘다 위에 있으면 안됨!!
         orders.add(order);
+
+        if (order.getMember() != this)
+            order.setMember(this);
     }
+
+    public void addStamp(Stamp stamp){ this.stamp = stamp;}
 
     // 추가 된 부분
     public enum MemberStatus {

@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface CoffeeRepository extends JpaRepository<Coffee, Long> { // 수정된 부분
+    // 컬럼명은 카멜케이스로 적을것!
     Optional<Coffee> findByCoffeeCode(String coffeeCode);
 
     // 수정된 부분

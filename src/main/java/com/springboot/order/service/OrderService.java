@@ -1,7 +1,11 @@
 package com.springboot.order.service;
 
+import com.springboot.coffee.entity.Coffee;
+import com.springboot.coffee.service.CoffeeService;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
+import com.springboot.member.entity.Member;
+import com.springboot.member.entity.Stamp;
 import com.springboot.member.service.MemberService;
 import com.springboot.order.entity.Order;
 import com.springboot.order.repository.OrderRepository;
@@ -11,26 +15,42 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderService {
     private final MemberService memberService;
     private final OrderRepository orderRepository;
 
+    private final CoffeeService coffeeService;
+
     public OrderService(MemberService memberService,
-                        OrderRepository orderRepository) {
+                        OrderRepository orderRepository, CoffeeService coffeeService) {
         this.memberService = memberService;
         this.orderRepository = orderRepository;
+        this.coffeeService = coffeeService;
     }
 
     public Order createOrder(Order order) {
-        // 회원이 존재하는지 확인
-        memberService.findVerifiedMember(order.getMember().getMemberId());
+        verifyOrder(order);
 
-        // TODO 커피가 존재하는지 조회하는 로직이 포함되어야 합니다.
+        // 스탬프 추가
+        updateStamp(order);
 
         return orderRepository.save(order);
+    }
+
+    public void verifyOrder(Order order){
+        // 회원이 존재하는지 확인
+        Member member = memberService.findVerifiedMember(order.getMember().getMemberId());
+
+        // TODO 커피가 존재하는지 조회하는 로직이 포함되어야 합니다.
+        order.getOrderCoffees()
+                .stream()
+                .map(x -> coffeeService.findVerifiedCoffee(x.getCoffee().getCoffeeId()))
+                .collect(Collectors.toList());
     }
 
     // 메서드 추가
@@ -71,5 +91,21 @@ public class OrderService {
                 optionalOrder.orElseThrow(() ->
                         new BusinessLogicException(ExceptionCode.ORDER_NOT_FOUND));
         return findOrder;
+    }
+
+    public void updateStamp(Order order){
+        Member member = memberService.findMember(order.getMember().getMemberId());
+
+        int orderStampCnt =
+                order.getOrderCoffees().
+                        stream()
+                        .map(orderCoffe -> orderCoffe.getQuantity())
+                        .mapToInt(quantity -> quantity)
+                        .sum();
+
+        Stamp stamp = member.getStamp();
+        stamp.setStampCount(stamp.getStampCount() + orderStampCnt);
+        stamp.setModifiedAt(LocalDateTime.now());
+        memberService.updateMember(member);
     }
 }
