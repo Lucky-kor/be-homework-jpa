@@ -1,11 +1,14 @@
 package com.springboot.coffee.entity;
 
+import com.springboot.order.entity.Order;
+import com.springboot.order.entity.OrderCoffee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -38,6 +41,21 @@ public class Coffee {
 
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
+
+    @ManyToOne
+    @JoinColumn(name = "ORDER_ID")
+    private Order order;
+
+    @OneToMany(mappedBy = "coffee")
+    private List<OrderCoffee> orderCoffees;
+
+    public Coffee(Long coffeeId) {
+        this.coffeeId = coffeeId;
+    }
+
+    public void addOrder(Order order){
+        this.order = order;
+    }
 
     // 커피 상태 추가
     public enum CoffeeStatus {

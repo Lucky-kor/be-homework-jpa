@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -30,10 +32,28 @@ public class Order {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    public void addMember(Member member) {
-        this.member = member;
+    // 같이 등록되게
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderCoffee> orderCoffees = new ArrayList<>();
+
+    public void addOrderCoffee(OrderCoffee orderCoffee){
+        orderCoffees.add(orderCoffee);
+
+        if(orderCoffee.getOrder() != this)
+            orderCoffee.addOrder(this);
+
+
     }
 
+    public void setMember(Member member){
+        if (!member.getOrders().contains(this))
+            member.addOrder(this);
+        //member의 입장에서도 연결이 필요
+        //member가 가지고 있는 orderlist에 자신의 member(this)추가
+        //양방향일 땐 필수!
+        //중복이 없어야함
+        this.member = member;
+    }
     public enum OrderStatus {
         ORDER_REQUEST(1, "주문 요청"),
         ORDER_CONFIRM(2, "주문 확정"),

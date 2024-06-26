@@ -3,7 +3,10 @@ package com.springboot.member.service;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.member.entity.Member;
+import com.springboot.member.entity.Stamp;
 import com.springboot.member.repository.MemberRepository;
+import com.springboot.order.entity.Order;
+import com.springboot.order.entity.OrderCoffee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  *  - 메서드 구현
@@ -27,6 +31,7 @@ public class MemberService {
 
     public Member createMember(Member member) {
         // 이미 등록된 이메일인지 확인
+        member.setStamp(new Stamp());
         verifyExistsEmail(member.getEmail());
 
         return memberRepository.save(member);
@@ -43,6 +48,9 @@ public class MemberService {
         Optional.ofNullable(member.getMemberStatus())
                 .ifPresent(memberStatus -> findMember.setMemberStatus(memberStatus));
         findMember.setModifiedAt(LocalDateTime.now());
+
+        Optional.ofNullable(member.getStamp())
+                .ifPresent(stamp -> findMember.setStamp(member.getStamp()));
 
         return memberRepository.save(findMember);
     }
