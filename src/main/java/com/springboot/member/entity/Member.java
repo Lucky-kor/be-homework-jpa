@@ -28,7 +28,6 @@ public class Member {
     @Column(length = 13, nullable = false, unique = true)
     private String phone;
 
-    // 추가된 부분
     @Enumerated(value = EnumType.STRING)
     @Column(length = 20, nullable = false)
     private MemberStatus memberStatus = MemberStatus.MEMBER_ACTIVE;
@@ -42,6 +41,17 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.ALL)
+    private Stamp stamp;
+
+    public void setStamp(Stamp stamp) {
+        this.stamp = stamp;
+
+        if (stamp.getMember() != this) {
+            stamp.setMember(this);
+        }
+    }
+
     public Member(String email) {
         this.email = email;
     }
@@ -52,11 +62,14 @@ public class Member {
         this.phone = phone;
     }
 
-    public void addOrder(Order order) {
+    public void setOrder(Order order) {
         orders.add(order);
+
+        if (order.getMember() != this) {
+            order.setMember(this);
+        }
     }
 
-    // 추가 된 부분
     public enum MemberStatus {
         MEMBER_ACTIVE("활동중"),
         MEMBER_SLEEP("휴면 상태"),
@@ -66,7 +79,7 @@ public class Member {
         private String status;
 
         MemberStatus(String status) {
-           this.status = status;
+            this.status = status;
         }
     }
 }

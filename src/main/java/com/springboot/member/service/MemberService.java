@@ -3,6 +3,7 @@ package com.springboot.member.service;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.member.entity.Member;
+import com.springboot.member.entity.Stamp;
 import com.springboot.member.repository.MemberRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -27,6 +28,7 @@ public class MemberService {
 
     public Member createMember(Member member) {
         // 이미 등록된 이메일인지 확인
+        member.setStamp(new Stamp());
         verifyExistsEmail(member.getEmail());
 
         return memberRepository.save(member);
