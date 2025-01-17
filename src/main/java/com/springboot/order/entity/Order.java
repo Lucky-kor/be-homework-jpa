@@ -1,12 +1,15 @@
 package com.springboot.order.entity;
 
 import com.springboot.member.entity.Member;
+import com.springboot.order_coffee.entity.OrderCoffee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -15,6 +18,7 @@ import java.time.LocalDateTime;
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "ORDERS_ID")
     private Long orderId;
 
     @Enumerated(EnumType.STRING)
@@ -29,6 +33,25 @@ public class Order {
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
+
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderCoffee> orderCoffees = new ArrayList<>();
+
+    public void setOrderCoffee(OrderCoffee orderCoffee) {
+        if (orderCoffee.getOrder() != this) {
+            orderCoffee.setOrder(this);
+        }
+
+        orderCoffees.add(orderCoffee);
+    }
+
+    public void setMember(Member member) {
+        this.member = member;
+
+        if (!member.getOrders().contains(this)){
+            member.setOrder(this);
+        }
+    }
 
     public void addMember(Member member) {
         this.member = member;

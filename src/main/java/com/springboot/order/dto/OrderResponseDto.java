@@ -17,7 +17,7 @@ public class OrderResponseDto {
     private List<OrderCoffeeResponseDto> orderCoffees;
     private LocalDateTime createdAt;
 
-    public void setMember(Member member) {
+    public void setMember(Member member){
         this.memberId = member.getMemberId();
     }
 }

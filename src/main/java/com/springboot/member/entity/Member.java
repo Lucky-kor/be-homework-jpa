@@ -1,6 +1,7 @@
 package com.springboot.member.entity;
 
 import com.springboot.order.entity.Order;
+import com.springboot.stamp.entity.Stamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -42,6 +43,18 @@ public class Member {
     @OneToMany(mappedBy = "member")
     private List<Order> orders = new ArrayList<>();
 
+    @OneToOne(mappedBy = "member", cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "STAMP_ID")
+    private Stamp stamp;
+
+    public void setStamp(Stamp stamp) {
+        this.stamp = stamp;
+
+        if (stamp.getMember() != this) {
+            stamp.setMember(this);
+        }
+    }
+
     public Member(String email) {
         this.email = email;
     }
@@ -52,11 +65,14 @@ public class Member {
         this.phone = phone;
     }
 
-    public void addOrder(Order order) {
+    public void setOrder(Order order) {
         orders.add(order);
+
+        if(order.getMember() != this) {
+            order.setMember(this);
+        }
     }
 
-    // 추가 된 부분
     public enum MemberStatus {
         MEMBER_ACTIVE("활동중"),
         MEMBER_SLEEP("휴면 상태"),
