@@ -7,6 +7,8 @@ import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -26,12 +28,30 @@ public class Order {
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
 
+    //    Order과 OrderCoffee를 연결짓자
+    @OneToMany(mappedBy = "order", cascade = CascadeType.PERSIST)
+    private List<OrderCoffee> orderCoffees = new ArrayList<> ();
+
+    public void setOrderCoffee(OrderCoffee orderCoffee) {
+        orderCoffees.add(orderCoffee);
+
+        if(orderCoffee.getOrder() != this) {
+            orderCoffee.setOrder(this);
+        }
+    }
+
+
+//    Member와 연결 Order가 다
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    public void addMember(Member member) {
+    public void setMember(Member member) {
         this.member = member;
+//        주문한 멤버가 다를 때, member를 생성한다.
+        if(!member.getOrders().contains (this)) {
+            member.setOrder(this);
+        }
     }
 
     public enum OrderStatus {

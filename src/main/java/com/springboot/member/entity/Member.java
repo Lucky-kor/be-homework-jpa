@@ -39,8 +39,12 @@ public class Member {
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "member")
+    @OneToMany(mappedBy = "member", cascade = CascadeType.PERSIST)
     private List<Order> orders = new ArrayList<>();
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name="STAMP_ID")
+    private Stamp stamp = new Stamp ();
 
     public Member(String email) {
         this.email = email;
@@ -51,9 +55,13 @@ public class Member {
         this.name = name;
         this.phone = phone;
     }
-
-    public void addOrder(Order order) {
+// Order entity 와 연결 짓자. Member가 1. Order 가 Meny
+    public void setOrder(Order order) {
         orders.add(order);
+
+        if(order.getMember() != this) {
+            order.setMember (this);
+        }
     }
 
     // 추가 된 부분
