@@ -1,5 +1,6 @@
 package com.springboot.order.service;
 
+import com.springboot.coffee.service.CoffeeService;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.member.service.MemberService;
@@ -17,11 +18,12 @@ import java.util.Optional;
 public class OrderService {
     private final MemberService memberService;
     private final OrderRepository orderRepository;
+    private final CoffeeService coffeeService;
 
-    public OrderService(MemberService memberService,
-                        OrderRepository orderRepository) {
+    public OrderService(MemberService memberService, OrderRepository orderRepository, CoffeeService coffeeService) {
         this.memberService = memberService;
         this.orderRepository = orderRepository;
+        this.coffeeService = coffeeService;
     }
 
     public Order createOrder(Order order) {
@@ -29,10 +31,17 @@ public class OrderService {
         memberService.findVerifiedMember(order.getMember().getMemberId());
 
         // TODO 커피가 존재하는지 조회하는 로직이 포함되어야 합니다.
+        order.getOrderCoffees().stream()
+                .forEach(orderCoffee -> coffeeService.findVerifiedCoffee(orderCoffee.getCoffee().getCoffeeId()));
+
 
         return orderRepository.save(order);
     }
 
+
+    public int getToTotalQuantity(Order order) {
+       return order.getOrderCoffees().stream().mapToInt(orderCoffee -> orderCoffee.getQuantity()).sum();
+    }
     // 메서드 추가
     public Order updateOrder(Order order) {
         Order findOrder = findVerifiedOrder(order.getOrderId());
