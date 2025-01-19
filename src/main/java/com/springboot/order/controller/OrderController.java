@@ -1,11 +1,16 @@
 package com.springboot.order.controller;
 
+import com.springboot.coffee.entity.Coffee;
 import com.springboot.coffee.service.CoffeeService;
+import com.springboot.member.entity.Member;
+import com.springboot.order.dto.OrderCoffeeDto;
+import com.springboot.order.dto.OrderCoffeeResponseDto;
 import com.springboot.order.dto.OrderPatchDto;
 import com.springboot.order.dto.OrderPostDto;
 import com.springboot.order.entity.Order;
 import com.springboot.order.mapper.OrderMapper;
 import com.springboot.order.service.OrderService;
+import com.springboot.ordercoffees.entity.OrderCoffee;
 import com.springboot.utils.UriCreator;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
@@ -28,9 +33,7 @@ public class OrderController {
     private final OrderMapper mapper;
     private final CoffeeService coffeeService;
 
-    public OrderController(OrderService orderService,
-                           OrderMapper mapper,
-                           CoffeeService coffeeService) {
+    public OrderController(OrderService orderService, OrderMapper mapper, CoffeeService coffeeService) {
         this.orderService = orderService;
         this.mapper = mapper;
         this.coffeeService = coffeeService;
@@ -53,8 +56,10 @@ public class OrderController {
         return new ResponseEntity<>(null);
     }
 
+    //TODO ::
     @GetMapping("/{order-id}")
-    public ResponseEntity getOrder(@PathVariable("order-id") @Positive long orderId) {
+    public ResponseEntity getOrder(@PathVariable("order-id") @Positive long orderId,
+                                   @Valid @RequestBody OrderCoffeeDto orderCoffeeDto) {
         Order order = orderService.findOrder(orderId);
 
         // TODO JPA 기능에 맞춰서 회원이 주문한 커피 정보를 ResponseEntity에 포함 시키세요.

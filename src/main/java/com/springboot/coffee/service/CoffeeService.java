@@ -62,6 +62,7 @@ public class CoffeeService {
         coffeeRepository.delete(coffee);
     }
 
+    //
     public Coffee findVerifiedCoffee(long coffeeId) {
         Optional<Coffee> optionalCoffee = coffeeRepository.findById(coffeeId);
         Coffee findCoffee =

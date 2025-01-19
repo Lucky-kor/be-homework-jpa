@@ -1,10 +1,12 @@
 package com.springboot.order.service;
 
+import com.springboot.coffee.service.CoffeeService;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.member.service.MemberService;
 import com.springboot.order.entity.Order;
 import com.springboot.order.repository.OrderRepository;
+import com.springboot.ordercoffees.entity.OrderCoffee;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -17,11 +19,12 @@ import java.util.Optional;
 public class OrderService {
     private final MemberService memberService;
     private final OrderRepository orderRepository;
+    private CoffeeService coffeeService;
 
-    public OrderService(MemberService memberService,
-                        OrderRepository orderRepository) {
+    public OrderService(MemberService memberService, OrderRepository orderRepository, CoffeeService coffeeService) {
         this.memberService = memberService;
         this.orderRepository = orderRepository;
+        this.coffeeService = coffeeService;
     }
 
     public Order createOrder(Order order) {
@@ -29,6 +32,15 @@ public class OrderService {
         memberService.findVerifiedMember(order.getMember().getMemberId());
 
         // TODO 커피가 존재하는지 조회하는 로직이 포함되어야 합니다.
+        order.getOrderCoffees().forEach(orderCoffee -> {
+            coffeeService.findVerifiedCoffee(orderCoffee.getCoffee().getCoffeeId());
+        });
+
+
+        // 수량 더하기 로직
+        int totalCoffeeCount = order.getOrderCoffees().stream()
+                .mapToInt(OrderCoffee::getQuantity)
+                .sum();
 
         return orderRepository.save(order);
     }
@@ -72,4 +84,6 @@ public class OrderService {
                         new BusinessLogicException(ExceptionCode.ORDER_NOT_FOUND));
         return findOrder;
     }
+
+
 }

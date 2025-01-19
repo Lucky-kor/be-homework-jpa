@@ -1,12 +1,17 @@
 package com.springboot.order.entity;
 
 import com.springboot.member.entity.Member;
+import com.springboot.ordercoffees.entity.OrderCoffee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @NoArgsConstructor
 @Getter
@@ -30,10 +35,6 @@ public class Order {
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    public void addMember(Member member) {
-        this.member = member;
-    }
-
     public enum OrderStatus {
         ORDER_REQUEST(1, "주문 요청"),
         ORDER_CONFIRM(2, "주문 확정"),
@@ -51,4 +52,26 @@ public class Order {
             this.stepDescription = stepDescription;
         }
     }
+
+    public void setMember(Member member) {
+        this.member = member;
+
+        if (!member.getOrders().contains(this)) {
+            member.setOrder(this);
+        }
+
+    }
+
+    @OneToMany(mappedBy = "order")
+    private List<OrderCoffee> orderCoffees = new ArrayList<>();
+
+    public void setOrderCoffee(OrderCoffee orderCoffee) {
+
+        if (orderCoffee.getOrder() != this) {
+            orderCoffee.setOrder(this);
+        }
+
+        orderCoffees.add(orderCoffee);
+    }
+
 }

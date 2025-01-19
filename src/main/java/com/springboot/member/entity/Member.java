@@ -1,6 +1,7 @@
 package com.springboot.member.entity;
 
 import com.springboot.order.entity.Order;
+import com.springboot.stamp.entity.Stamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -52,9 +53,25 @@ public class Member {
         this.phone = phone;
     }
 
-    public void addOrder(Order order) {
+    // 수정 해야함 add X
+    public void setOrder(Order order) {
         orders.add(order);
+
+        if (order.getMember() != this) {
+            order.setMember(this);
+        };
     }
+
+    // StampCount와 Mapping
+    @OneToOne
+    private Stamp stamp;
+
+        // stampCount에 Member가 없다면 setMember
+//    public void setStampCount(StampCount stampCount) {
+//        if (stamp.getMember() != this) {
+//            stamp.setMember(this);
+//        }
+//    }
 
     // 추가 된 부분
     public enum MemberStatus {
@@ -69,4 +86,12 @@ public class Member {
            this.status = status;
         }
     }
+
+//    public void addOrder(Order order) {
+//
+//        if (order.getMember() != this) {
+//            order.setMember(this);
+//        }
+//
+//    }
 }
