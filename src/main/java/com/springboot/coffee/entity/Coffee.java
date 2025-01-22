@@ -1,11 +1,16 @@
 package com.springboot.coffee.entity;
 
+import com.springboot.order.entity.Order;
+import com.springboot.orderCoffee.entity.OrderCoffee;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -27,6 +32,9 @@ public class Coffee {
 
     @Column(length = 3, nullable = false, unique = true)
     private String coffeeCode;
+
+    @OneToMany(mappedBy = "coffee")
+    List<OrderCoffee> orderCoffees = new ArrayList<>();
 
     // 커피 상태 추가
     @Enumerated(value = EnumType.STRING)
@@ -51,4 +59,9 @@ public class Coffee {
             this.status = status;
         }
     }
+
+//    public void addOrderCoffee(OrderCoffee orderCoffee) {
+//        this.orderCoffees.add(orderCoffee);
+//        orderCoffee.setCoffee(this);
+//    }
 }

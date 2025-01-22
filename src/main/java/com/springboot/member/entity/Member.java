@@ -1,6 +1,7 @@
 package com.springboot.member.entity;
 
 import com.springboot.order.entity.Order;
+import com.springboot.stamp.Stamp;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,6 +29,10 @@ public class Member {
     @Column(length = 13, nullable = false, unique = true)
     private String phone;
 
+    @OneToOne(mappedBy = "member",cascade = CascadeType.ALL)
+    private Stamp stamp;
+
+
     // 추가된 부분
     @Enumerated(value = EnumType.STRING)
     @Column(length = 20, nullable = false)
@@ -51,9 +56,28 @@ public class Member {
         this.name = name;
         this.phone = phone;
     }
+    public Member(String email, String name, String phone, Stamp stamp) {
+        this.email = email;
+        this.name = name;
+        this.phone = phone;
+        this.stamp = stamp;
+    }
 
-    public void addOrder(Order order) {
+    public void setOrders(Order order) {
         orders.add(order);
+
+        if(order.getMember() != this) {
+            order.setMember(this);
+
+        }
+
+    }
+    public void setStamp (Stamp stamp) {
+        this.stamp = stamp;
+        if(stamp.getMember() != this) {
+            stamp.setMember(this);
+        }
+
     }
 
     // 추가 된 부분

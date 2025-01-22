@@ -1,10 +1,12 @@
 package com.springboot.member.dto;
 
 import com.springboot.member.entity.Member;
+import com.springboot.stamp.Stamp;
 import com.springboot.validator.NotSpace;
 import lombok.Getter;
 
 import javax.validation.constraints.Pattern;
+import javax.validation.constraints.Positive;
 
 @Getter
 public class MemberPatchDto {
@@ -20,6 +22,7 @@ public class MemberPatchDto {
 
     // 추가된 부분. 회원 상태 값을 사전에 체크하는 Custom Validator를 만들수도 있다.
     private Member.MemberStatus memberStatus;
+
 
 
     public void setMemberId(long memberId) {

@@ -1,12 +1,17 @@
 package com.springboot.order.entity;
 
+import com.springboot.coffee.entity.Coffee;
 import com.springboot.member.entity.Member;
+import com.springboot.orderCoffee.entity.OrderCoffee;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @NoArgsConstructor
 @Getter
@@ -26,12 +31,27 @@ public class Order {
     @Column(nullable = false, name = "LAST_MODIFIED_AT")
     private LocalDateTime modifiedAt = LocalDateTime.now();
 
+    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
+    private List<OrderCoffee> orderCoffees = new ArrayList<>();
+
+
     @ManyToOne
     @JoinColumn(name = "MEMBER_ID")
     private Member member;
 
-    public void addMember(Member member) {
+    public void setMember(Member member) {
         this.member = member;
+
+        if(!member.getOrders().contains(this)) {
+            member.setOrders(this);
+        }
+    }
+
+    public void setOrderCoffee(OrderCoffee orderCoffee) {
+        this.orderCoffees.add(orderCoffee);
+        if (orderCoffee.getOrder() != this) {
+            orderCoffee.setOrder(this);
+        }
     }
 
     public enum OrderStatus {

@@ -1,13 +1,17 @@
 package com.springboot.order.controller;
 
 import com.springboot.coffee.service.CoffeeService;
+import com.springboot.order.dto.OrderCoffeeResponseDto;
 import com.springboot.order.dto.OrderPatchDto;
 import com.springboot.order.dto.OrderPostDto;
+import com.springboot.order.dto.OrderResponseDto;
 import com.springboot.order.entity.Order;
 import com.springboot.order.mapper.OrderMapper;
 import com.springboot.order.service.OrderService;
+import com.springboot.response.MultiResponseDto;
 import com.springboot.utils.UriCreator;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.jaxb.SpringDataJaxb;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +21,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.Positive;
 import java.net.URI;
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -50,7 +55,7 @@ public class OrderController {
         orderPatchDto.setOrderId(orderId);
         Order order = orderService.updateOrder(mapper.orderPatchDtoToOrder(orderPatchDto));
 
-        return new ResponseEntity<>(null);
+        return ResponseEntity.noContent().build();
     }
 
     @GetMapping("/{order-id}")
@@ -58,8 +63,8 @@ public class OrderController {
         Order order = orderService.findOrder(orderId);
 
         // TODO JPA 기능에 맞춰서 회원이 주문한 커피 정보를 ResponseEntity에 포함 시키세요.
-
-        return new ResponseEntity<>(null);
+        OrderResponseDto orderResponseDto = mapper.orderToOrderResponseDto(order);
+        return new ResponseEntity<>(orderResponseDto,HttpStatus.OK);
     }
 
     @GetMapping
@@ -70,7 +75,9 @@ public class OrderController {
 
         // TODO JPA 기능에 맞춰서 회원이 주문한 커피 정보 목록을 ResponseEntity에 포함 시키세요.
 
-        return new ResponseEntity<>(null);
+        List<OrderResponseDto> orderResponseDtos = mapper.ordersToOrderResponseDtos(orders);
+
+        return new ResponseEntity<>(new MultiResponseDto<>(orderResponseDtos, pageOrders),HttpStatus.OK);
     }
 
     @DeleteMapping("/{order-id}")

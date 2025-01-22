@@ -7,7 +7,7 @@ import javax.validation.constraints.Positive;
 @Getter
 public class OrderCoffeeDto {
     @Positive
-    private long coffeeId;
+    private Long coffeeId;
 
     @Positive
     private int quantity;

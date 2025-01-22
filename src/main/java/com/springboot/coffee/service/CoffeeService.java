@@ -70,12 +70,22 @@ public class CoffeeService {
 
         return findCoffee;
     }
+    public boolean findVerifiedCoffeeId(long coffeeId) {
+        return coffeeRepository.existsById(coffeeId);
+    }
 
     private void verifyExistCoffee(String coffeeCode) {
         Optional<Coffee> coffee = coffeeRepository.findByCoffeeCode(coffeeCode);
         if(coffee.isPresent())
             throw new BusinessLogicException(ExceptionCode.COFFEE_CODE_EXISTS);
     }
+
+    private void verifyExistCoffee(long coffeeId) {
+        Optional<Coffee> coffee = coffeeRepository.findById(coffeeId);
+        if(coffee.isPresent())
+            throw new BusinessLogicException(ExceptionCode.COFFEE_CODE_EXISTS);
+    }
+
 
     private Coffee findVerifiedCoffeeByQuery(long coffeeId) {
         Optional<Coffee> optionalCoffee = coffeeRepository.findByCoffee(coffeeId);
@@ -85,4 +95,5 @@ public class CoffeeService {
 
         return findCoffee;
     }
+
 }

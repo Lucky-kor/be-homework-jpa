@@ -14,4 +14,5 @@ public interface CoffeeMapper {
     Coffee coffeePatchDtoToCoffee(CoffeePatchDto coffeePatchDto);
     CoffeeResponseDto coffeeToCoffeeResponseDto(Coffee coffee);
     List<CoffeeResponseDto> coffeesToCoffeeResponseDtos(List<Coffee> coffees);
+
 }

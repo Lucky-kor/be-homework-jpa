@@ -1,9 +1,11 @@
 package com.springboot.member.service;
 
+import com.springboot.coffee.entity.Coffee;
 import com.springboot.exception.BusinessLogicException;
 import com.springboot.exception.ExceptionCode;
 import com.springboot.member.entity.Member;
 import com.springboot.member.repository.MemberRepository;
+import com.springboot.stamp.Stamp;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -28,6 +30,16 @@ public class MemberService {
     public Member createMember(Member member) {
         // 이미 등록된 이메일인지 확인
         verifyExistsEmail(member.getEmail());
+
+        // 그냥 mapper 에서 변환할때 stamp 새로 만들면서 동기화까지 한번에 하고 member 로 반환해주면 끝남
+        // 그러면 mapper 에서 전부 처리해서 service 건드릴거 없음
+        // 계속 에러가 났던건 MemberDto 에는 stamp 필드가 없는데 mapper 로 변환할때
+        // Member 에서는 stamp 필드를 받으려하면서 존재하지 않는걸 맵핑하려니 터진듯함
+
+        // 얘도 되는데 내가 뭘 잘못한듯함 다시 확인 ㄱ
+//        Stamp stamp = new Stamp();
+//        stamp.setMember(member);
+//        member.setStamp(stamp);
 
         return memberRepository.save(member);
     }
@@ -70,6 +82,10 @@ public class MemberService {
                         new BusinessLogicException(ExceptionCode.MEMBER_NOT_FOUND));
         return findMember;
     }
+
+
+
+
 
     private void verifyExistsEmail(String email) {
         Optional<Member> member = memberRepository.findByEmail(email);
